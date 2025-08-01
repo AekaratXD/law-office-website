@@ -12,7 +12,6 @@
             background-color: #f8f9fa;
         }
         .law-bg { background-color: #1a365d; }
-        .law-accent { background-color: #7f1d1d; }
         .law-gold { color: #d4af37; }
         .law-paper {
             background-color: #fff;
@@ -44,31 +43,15 @@
             opacity: 0.05;
             pointer-events: none;
         }
-        .claim-details { min-height: 80px; resize: vertical; }
-        .detail-item { display: flex; align-items: center; margin-bottom: 8px; }
-        .detail-item input { flex-grow: 1; }
-        .detail-item button { flex-shrink: 0; margin-left: 8px; }
-        /* Custom modal for alerts */
         .modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 0.5rem;
+            background-color: white; padding: 2rem; border-radius: 0.5rem;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            max-width: 90%;
-            width: 400px;
-            text-align: center;
+            max-width: 90%; width: 400px; text-align: center;
         }
         .modal-close-btn { background-color: #1a365d; color: white; }
     </style>
@@ -84,19 +67,53 @@
                 </div>
             </div>
             <nav class="flex flex-wrap justify-center">
-                <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('filing')">ท้ายฟ้อง</a>
+                <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('deka-search')">ค้นหาคำพิพากษา</a>
+                <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('fee-calculator')">คำนวณทุนทรัพย์</a>
                 <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('interest')">คำนวณดอกเบี้ย</a>
                 <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('age')">คำนวณอายุ</a>
+                <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('filing')">ท้ายฟ้อง</a>
                 <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('email')">ร่างอีเมล</a>
-                <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('tasks')">บันทึกงาน</a>
                 <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('contact')">ติดต่อเรา</a>
             </nav>
         </div>
     </header>
 
     <main class="container mx-auto px-4 py-8">
-        <div id="filing-page" class="page">
+
+        <div id="deka-search-page" class="page">
+            <div class="law-paper p-6 md:p-8 rounded-lg max-w-7xl mx-auto relative overflow-hidden">
+                 <h2 class="text-2xl font-bold mb-6 text-center law-gold">ค้นหาคำพิพากษาศาลฎีกา</h2>
+                 <p class="text-center text-gray-500 mb-4">
+                    กำลังแสดงผลจาก <a href="https://deka.supremecourt.or.th/" target="_blank" class="text-blue-600 hover:underline">deka.supremecourt.or.th</a>
+                 </p>
+                 <iframe src="https://deka.supremecourt.or.th/" style="width: 100%; height: 80vh; border: 1px solid #ccc; border-radius: 0.5rem;"></iframe>
+            </div>
+        </div>
+
+        <div id="fee-calculator-page" class="page hidden">
             <div class="law-paper p-6 md:p-8 rounded-lg max-w-4xl mx-auto relative overflow-hidden">
+                <svg class="law-seal top-10 right-10" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="#000" stroke-width="2"/><path d="M50 5 L50 95 M5 50 L95 50" stroke="#000" stroke-width="2"/><circle cx="50" cy="50" r="30" fill="none" stroke="#000" stroke-width="2"/></svg>
+                <h2 class="text-2xl font-bold mb-6 text-center law-gold">คำนวณค่าธรรมเนียมศาล (คดีแพ่ง)</h2>
+                <div class="mb-4">
+                    <label for="claim-value" class="block text-gray-700 font-semibold mb-2">ทุนทรัพย์ที่เรียกร้อง (บาท)</label>
+                    <input type="number" id="claim-value" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="เช่น 1500000" step="1000">
+                </div>
+                <div class="text-center mb-8">
+                    <button id="calculate-fee-btn" class="btn-law px-6 py-3 rounded font-semibold">คำนวณค่าธรรมเนียม</button>
+                </div>
+                <div id="fee-result" class="p-6 bg-gray-50 rounded border hidden">
+                    <h3 class="text-xl font-bold mb-4 text-center">ผลการคำนวณ</h3>
+                    <div class="text-center space-y-2">
+                        <p><strong>ทุนทรัพย์:</strong> <span id="result-claim-value"></span> บาท</p>
+                        <p class="text-2xl font-bold"><strong>ค่าธรรมเนียมศาล:</strong> <span id="result-court-fee" class="text-red-600"></span> บาท</p>
+                        <p class="text-gray-600 mt-2">(<span id="result-fee-explanation"></span>)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="filing-page" class="page hidden">
+             <div class="law-paper p-6 md:p-8 rounded-lg max-w-4xl mx-auto relative overflow-hidden">
                 <svg class="law-seal top-10 right-10" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="#000" stroke-width="2"/><path d="M50 5 L50 95 M5 50 L95 50" stroke="#000" stroke-width="2"/><circle cx="50" cy="50" r="30" fill="none" stroke="#000" stroke-width="2"/></svg>
                 <h2 class="text-2xl font-bold mb-6 text-center law-gold">ระบบสร้างท้ายฟ้อง</h2>
                 <div class="mb-6">
@@ -202,41 +219,6 @@
             </div>
         </div>
 
-        <div id="tasks-page" class="page hidden">
-            <div class="law-paper p-6 md:p-8 rounded-lg max-w-4xl mx-auto relative overflow-hidden">
-                <svg class="law-seal top-10 right-10" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="#000" stroke-width="2"/><path d="M50 5 L50 95 M5 50 L95 50" stroke="#000" stroke-width="2"/><circle cx="50" cy="50" r="30" fill="none" stroke="#000" stroke-width="2"/></svg>
-                <h2 class="text-2xl font-bold mb-6 text-center law-gold">บันทึกงานที่ได้รับ</h2>
-                <form id="task-form">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <div class="mb-4"><label for="task-case-ref" class="block text-gray-700 font-semibold mb-2">เลขเรื่อง</label><input type="text" id="task-case-ref" name="caseRef" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="เช่น 123/2567"></div>
-                            <div class="mb-4"><label for="task-court-name" class="block text-gray-700 font-semibold mb-2">ชื่อศาล</label><input type="text" id="task-court-name" name="courtName" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="เช่น ศาลแพ่งกรุงเทพใต้"></div>
-                            <div class="mb-4">
-                                <label class="block text-gray-700 font-semibold mb-2">เลขคดี</label>
-                                <div class="flex">
-                                    <select id="task-case-number-prefix" class="px-3 py-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500"><option value="ม.">ม.</option><option value="พ.">พ.</option><option value="พณ.">พณ.</option><option value="อ.">อ.</option><option value="มE.">มE.</option><option value="พE.">พE.</option><option value="พณE.">พณE.</option><option value="other">อื่นๆ</option></select>
-                                    <input type="text" id="task-case-number-value" class="flex-1 w-full px-4 py-2 border-t border-b border-r rounded-r focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="1234/2567">
-                                </div>
-                                <input type="text" id="task-case-number-other" class="w-full mt-2 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hidden" placeholder="ระบุเลขคดีเต็ม">
-                            </div>
-                            <div class="mb-4"><label for="task-status" class="block text-gray-700 font-semibold mb-2">สถานะ</label><select id="task-status" name="status" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"><option value="รับงาน">รับงาน</option><option value="ส่งตรวจ">ส่งตรวจ</option><option value="จัดการแล้ว">จัดการแล้ว</option></select></div>
-                        </div>
-                        <div>
-                            <div class="mb-4"><label for="task-statute-date" class="block text-gray-700 font-semibold mb-2">อายุความ</label><input type="date" id="task-statute-date" name="statuteDate" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
-                            <div class="mb-4"><label for="task-due-date" class="block text-gray-700 font-semibold mb-2">กำหนดส่งงาน</label><input type="date" id="task-due-date" name="dueDate" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
-                            <div class="mb-4"><label for="task-description" class="block text-gray-700 font-semibold mb-2">ลักษณะงาน</label><textarea id="task-description" name="taskDesc" rows="5" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="อธิบายลักษณะงานโดยย่อ..."></textarea></div>
-                        </div>
-                    </div>
-                    <div class="mt-6 text-center">
-                        <button type="submit" id="save-task-btn" class="btn-law px-8 py-3 rounded font-semibold">
-                            <span id="save-task-btn-text">บันทึกข้อมูล</span>
-                            <span id="save-task-spinner" class="hidden"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>กำลังบันทึก...</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div id="contact-page" class="page hidden">
             <div class="law-paper p-6 md:p-8 rounded-lg max-w-4xl mx-auto relative overflow-hidden">
                 <svg class="law-seal top-10 right-10" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="#000" stroke-width="2"/><path d="M50 5 L50 95 M5 50 L95 50" stroke="#000" stroke-width="2"/><circle cx="50" cy="50" r="30" fill="none" stroke="#000" stroke-width="2"/></svg>
@@ -269,7 +251,27 @@
     </main>
 
     <footer class="law-bg text-white py-6 mt-8">
-        <div class="container mx-auto px-4"><div class="flex flex-col md:flex-row justify-between items-center"><div class="mb-4 md:mb-0"><p>&copy; 2024 สำนักงานทนายความ. สงวนลิขสิทธิ์.</p></div><div class="flex space-x-4"><a href="#" class="text-white hover:text-gray-300">นโยบายความเป็นส่วนตัว</a><a href="#" class="text-white hover:text-gray-300">เงื่อนไขการใช้งาน</a></div></div></div>
+        <div class="container mx-auto px-4">
+            <div class="mb-6 text-center">
+                <h3 class="text-xl font-semibold mb-4 law-gold">เครื่องมือและลิงก์ด่วน</h3>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <a href="https://efiling3.coj.go.th/eFiling/#/" target="_blank" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">ยื่นฟ้อง (e-Filing)</a>
+                    <a href="https://cios.coj.go.th/tracking/" target="_blank" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">ติดตามสำนวน (CIOS)</a>
+                    <a href="https://exp.coj.go.th/sentnotice/" target="_blank" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">ระบบอัตราค่านำหมาย</a>
+                    <a href="https://www.xn--k3cpwcc7akh8cvb2l1d.com/index.php" target="_blank" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">ค้นหารหัสไปรษณีย์</a>
+                    <a href="https://ebiz.dbd.go.th/eservice-web/home.xhtml" target="_blank" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">ค้นหาข้อมูลนิติบุคคล (DBD)</a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p>&copy; 2025 สำนักงานทนายความ. สงวนลิขสิทธิ์.</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-white hover:text-gray-300">นโยบายความเป็นส่วนตัว</a>
+                    <a href="#" class="text-white hover:text-gray-300">เงื่อนไขการใช้งาน</a>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <div id="alert-modal" class="modal-backdrop hidden">
@@ -292,8 +294,7 @@
             const formattedDate = today.toISOString().split('T')[0];
             document.getElementById('end-date').value = formattedDate;
             document.getElementById('calculation-date').value = formattedDate;
-            showPage('tasks'); // Default page is now 'tasks' for easier testing
-            updateClaimForms();
+            showPage('deka-search'); // Default page
         });
 
         // --- NAVIGATION ---
@@ -308,6 +309,49 @@
             });
         }
 
+        // --- FEE CALCULATOR ---
+        document.getElementById('calculate-fee-btn').addEventListener('click', function() {
+            const claimValueInput = document.getElementById('claim-value');
+            const claimValue = parseFloat(claimValueInput.value);
+
+            if (isNaN(claimValue) || claimValue <= 0) {
+                customAlert("กรุณากรอกทุนทรัพย์ให้ถูกต้อง");
+                return;
+            }
+
+            let fee = 0;
+            let explanation = "";
+
+            if (claimValue > 50000000) {
+                // Fee for first 50M is capped at 200,000
+                // Fee for amount exceeding 50M is 0.1%
+                fee = 200000 + ((claimValue - 50000000) * 0.001);
+                explanation = "คำนวณจากอัตรา 2% ใน 50 ล้านแรก (สูงสุด 200,000) และ 0.1% สำหรับส่วนที่เกิน";
+            } else {
+                fee = claimValue * 0.02; // 2%
+                explanation = "คำนวณจากอัตราร้อยละ 2 ของทุนทรัพย์";
+                if (fee > 200000) {
+                    fee = 200000;
+                    explanation += " (สูงสุดไม่เกิน 200,000 บาท)";
+                }
+            }
+
+            // Minor case rule
+            if (claimValue <= 300000) {
+                explanation = "คดีมโนสาเร่ (ทุนทรัพย์ไม่เกิน 300,000 บาท)";
+                if (fee > 1000) {
+                    fee = 1000;
+                    explanation += " ค่าธรรมเนียมสูงสุดไม่เกิน 1,000 บาท";
+                }
+            }
+
+            document.getElementById('result-claim-value').textContent = claimValue.toLocaleString('th-TH');
+            document.getElementById('result-court-fee').textContent = fee.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('result-fee-explanation').textContent = explanation;
+            document.getElementById('fee-result').classList.remove('hidden');
+        });
+
+
         // --- FILING PAGE ---
         function selectDefendantCount(count) {
             document.querySelectorAll('.defendant-btn').forEach(btn => {
@@ -320,78 +364,11 @@
             document.getElementById('single-defendant-form').classList.toggle('hidden', count !== 1);
             document.getElementById('multiple-defendants-form').classList.toggle('hidden', count === 1);
         }
-
-        function convertToThaiText(number) {
-            if (number === 0) return "ศูนย์";
-            const units = ["", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
-            const positions = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
-            let numberStr = Math.abs(number).toString();
-            let result = "";
-            let millionCount = 0;
-            while (numberStr.length > 0) {
-                let chunk = numberStr.length > 6 ? numberStr.slice(numberStr.length - 6) : numberStr;
-                numberStr = numberStr.length > 6 ? numberStr.slice(0, numberStr.length - 6) : "";
-                let chunkResult = "";
-                for (let i = 0; i < chunk.length; i++) {
-                    let digit = parseInt(chunk[i]);
-                    let position = chunk.length - 1 - i;
-                    if (digit !== 0) {
-                        if (digit === 1 && position === 1) chunkResult += "สิบ";
-                        else if (digit === 2 && position === 1) chunkResult += "ยี่สิบ";
-                        else if (digit === 1 && position === 0 && chunk.length > 1) chunkResult += "เอ็ด";
-                        else chunkResult += units[digit] + positions[position];
-                    }
-                }
-                if (chunkResult !== "") {
-                    if (millionCount > 0) chunkResult += "ล้าน".repeat(millionCount);
-                    result = chunkResult + result;
-                }
-                millionCount++;
-            }
-            return result;
-        }
-
-        function formatNumber(number) {
-            if (isNaN(number)) return '';
-            return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        function numberToBahtText(number) {
-            if (isNaN(number) || number === null) return "ศูนย์บาทถ้วน";
-            let [intPart, decPart] = number.toFixed(2).split('.');
-            intPart = parseInt(intPart, 10);
-            decPart = parseInt(decPart, 10);
-            let result = convertToThaiText(intPart) + "บาท";
-            if (decPart > 0) result += convertToThaiText(decPart) + "สตางค์";
-            else result += "ถ้วน";
-            return result;
-        }
-        document.getElementById('generate-filing').addEventListener('click', function() {
-            let filingText = "";
-            if (document.getElementById('defendant-1').classList.contains('active')) {
-                const damageAmount = parseFloat(document.getElementById('damage-amount-1').value);
-                const principalAmount = parseFloat(document.getElementById('principal-amount-1').value);
-                const interestRate = parseFloat(document.getElementById('interest-rate-1').value);
-                if (isNaN(damageAmount) || isNaN(principalAmount) || isNaN(interestRate)) {
-                    customAlert("กรุณากรอกข้อมูลให้ครบถ้วน"); return;
-                }
-                filingText = `ขอให้จำเลยชดใช้ค่าเสียหายให้แก่โจทก์รวมเป็นจำนวนเงิน ${formatNumber(damageAmount)} บาท (${numberToBahtText(damageAmount)}) พร้อมดอกเบี้ยในอัตราร้อยละ ${interestRate} ต่อปี ของต้นเงิน ${formatNumber(principalAmount)} บาท (${numberToBahtText(principalAmount)}) นับแต่วันฟ้องเป็นต้นไป จนกว่าจำเลยจะชำระให้แก่โจทก์เสร็จสิ้น กับขอให้จำเลยชดใช้ค่าฤชาธรรมเนียม และค่าทนายความแทนโจทก์`;
-            } else {
-                const defendantCount = parseInt(document.getElementById('defendant-count').value);
-                const damageAmount = parseFloat(document.getElementById('damage-amount-2').value);
-                const principalAmount = parseFloat(document.getElementById('principal-amount-2').value);
-                const interestRate = parseFloat(document.getElementById('interest-rate-2').value);
-                if (isNaN(defendantCount) || isNaN(damageAmount) || isNaN(principalAmount) || isNaN(interestRate)) {
-                    customAlert("กรุณากรอกข้อมูลให้ครบถ้วน"); return;
-                }
-                filingText = `ขอให้จำเลยทั้ง${convertToThaiText(defendantCount)}ร่วมกันหรือแทนกันชดใช้ค่าเสียหายให้แก่โจทก์รวมเป็นจำนวนเงิน ${formatNumber(damageAmount)} บาท (${numberToBahtText(damageAmount)}) พร้อมดอกเบี้ยในอัตราร้อยละ ${interestRate} ต่อปี ของต้นเงิน ${formatNumber(principalAmount)} บาท (${numberToBahtText(principalAmount)}) นับแต่วันฟ้องเป็นต้นไป จนกว่าจำเลยทั้ง${convertToThaiText(defendantCount)}จะชำระให้แก่โจทก์เสร็จสิ้น กับขอให้จำเลยทั้ง${convertToThaiText(defendantCount)}ร่วมกันหรือแทนกันชดใช้ค่าฤชาธรรมเนียม และค่าทนายความแทนโจทก์`;
-            }
-            document.getElementById('filing-text').textContent = filingText;
-            document.getElementById('filing-result').classList.remove('hidden');
-        });
-        document.getElementById('copy-filing').addEventListener('click', function() {
-            navigator.clipboard.writeText(document.getElementById('filing-text').textContent).then(() => customAlert("คัดลอกข้อความเรียบร้อยแล้ว"));
-        });
+        function convertToThaiText(number){if(number===0)return"ศูนย์";const t=["","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า"],e=["","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน"];let o=Math.abs(number).toString(),n="";let l=0;for(;o.length>0;){let r=o.length>6?o.slice(o.length-6):o,a="";o=o.length>6?o.slice(0,o.length-6):"";for(let o=0;o<r.length;o++){let n=parseInt(r[o]),s=r.length-1-o;0!==n&&(1===n&&1===s?a+="สิบ":2===n&&1===s?a+="ยี่สิบ":1===n&&0===s&&r.length>1?a+="เอ็ด":a+=t[n]+e[s])}""!==a&&(l>0&&(a+=e[6].repeat(l)),n=a+n),l++}return n}
+        function formatNumber(t){return isNaN(t)?"":t.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
+        function numberToBahtText(t){if(isNaN(t)||null===t)return"ศูนย์บาทถ้วน";let[e,o]=t.toFixed(2).split(".");e=parseInt(e,10),o=parseInt(o,10);let n=convertToThaiText(e)+"บาท";return o>0?n+=convertToThaiText(o)+"สตางค์":n+="ถ้วน",n}
+        document.getElementById('generate-filing').addEventListener('click',function(){let t="";if(document.getElementById('defendant-1').classList.contains('active')){const e=parseFloat(document.getElementById('damage-amount-1').value),o=parseFloat(document.getElementById('principal-amount-1').value),n=parseFloat(document.getElementById('interest-rate-1').value);if(isNaN(e)||isNaN(o)||isNaN(n))return void customAlert("กรุณากรอกข้อมูลให้ครบถ้วน");t=`ขอให้จำเลยชดใช้ค่าเสียหายให้แก่โจทก์รวมเป็นจำนวนเงิน ${formatNumber(e)} บาท (${numberToBahtText(e)}) พร้อมดอกเบี้ยในอัตราร้อยละ ${n} ต่อปี ของต้นเงิน ${formatNumber(o)} บาท (${numberToBahtText(o)}) นับแต่วันฟ้องเป็นต้นไป จนกว่าจำเลยจะชำระให้แก่โจทก์เสร็จสิ้น กับขอให้จำเลยชดใช้ค่าฤชาธรรมเนียม และค่าทนายความแทนโจทก์`}else{const e=parseInt(document.getElementById('defendant-count').value),o=parseFloat(document.getElementById('damage-amount-2').value),n=parseFloat(document.getElementById('principal-amount-2').value),l=parseFloat(document.getElementById('interest-rate-2').value);if(isNaN(e)||isNaN(o)||isNaN(n)||isNaN(l))return void customAlert("กรุณากรอกข้อมูลให้ครบถ้วน");const r=convertToThaiText(e);t=`ขอให้จำเลยทั้ง${r}ร่วมกันหรือแทนกันชดใช้ค่าเสียหายให้แก่โจทก์รวมเป็นจำนวนเงิน ${formatNumber(o)} บาท (${numberToBahtText(o)}) พร้อมดอกเบี้ยในอัตราร้อยละ ${l} ต่อปี ของต้นเงิน ${formatNumber(n)} บาท (${numberToBahtText(n)}) นับแต่วันฟ้องเป็นต้นไป จนกว่าจำเลยทั้ง${r}จะชำระให้แก่โจทก์เสร็จสิ้น กับขอให้จำเลยทั้ง${r}ร่วมกันหรือแทนกันชดใช้ค่าฤชาธรรมเนียม และค่าทนายความแทนโจทก์`}document.getElementById('filing-text').textContent=t,document.getElementById('filing-result').classList.remove('hidden')});
+        document.getElementById('copy-filing').addEventListener('click',function(){navigator.clipboard.writeText(document.getElementById('filing-text').textContent).then(()=>customAlert("คัดลอกข้อความเรียบร้อยแล้ว"))});
 
         // --- INTEREST CALCULATOR ---
         document.getElementById('calculate-interest').addEventListener('click', function() {
@@ -471,19 +448,9 @@
             selectedBtn.classList.remove('bg-gray-200');
         }
         document.getElementById('recipient-name').addEventListener('change', function() { document.getElementById('other-recipient-container').classList.toggle('hidden', this.value !== 'other'); });
-        document.getElementById('claim-count').addEventListener('change', updateClaimForms);
-        document.getElementById('add-claim').addEventListener('click', () => {
-            const countInput = document.getElementById('claim-count');
-            countInput.value = parseInt(countInput.value) + 1;
-            updateClaimForms();
-        });
-        document.getElementById('remove-claim').addEventListener('click', () => {
-            const countInput = document.getElementById('claim-count');
-            if (parseInt(countInput.value) > 1) {
-                countInput.value = parseInt(countInput.value) - 1;
-                updateClaimForms();
-            }
-        });
+        document.getElementById('claim-count').addEventListener('input', updateClaimForms);
+        document.getElementById('add-claim').addEventListener('click', () => { const countInput = document.getElementById('claim-count'); countInput.value = parseInt(countInput.value) + 1; updateClaimForms(); });
+        document.getElementById('remove-claim').addEventListener('click', () => { const countInput = document.getElementById('claim-count'); if (parseInt(countInput.value) > 1) { countInput.value = parseInt(countInput.value) - 1; updateClaimForms(); }});
         function addDetailItem(detailsContainer) {
             const detailCount = detailsContainer.querySelectorAll('.detail-item').length + 1;
             const detailItem = document.createElement('div');
@@ -496,7 +463,8 @@
             detailsContainer.appendChild(detailItem);
         }
         function updateClaimForms() {
-            const count = parseInt(document.getElementById('claim-count').value);
+            const count = parseInt(document.getElementById('claim-count').value) || 1;
+            if (count < 1) return;
             const container = document.getElementById('claims-container');
             document.getElementById('remove-claim').disabled = count <= 1;
             container.innerHTML = '';
@@ -514,11 +482,7 @@
             let recipientName = document.getElementById('recipient-name').value;
             if (recipientName === 'other') { recipientName = document.getElementById('other-recipient').value; }
             if (!recipientName) { customAlert("กรุณาเลือกหรือระบุชื่อผู้รับ"); return; }
-            const formatDate = (date, time) => {
-                if (!date) return "";
-                const formattedDate = new Date(date).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
-                return formattedDate + (time ? ` เวลา ${time} น.` : "");
-            };
+            const formatDate = (date, time) => { if (!date) return ""; const formattedDate = new Date(date).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' }); return formattedDate + (time ? ` เวลา ${time} น.` : ""); };
             let emailText = selectedCompany === 'dv' ? `เรียนคุณ${recipientName}ฯ ฝ่ายนิติกรรม\n` : `เรียนคุณ${recipientName}ฯ ผู้จัดการกฎหมาย\n`;
             emailText += `\nทางบริษัทฯ ประสงค์ขอให้ท่านติดตามงานและขอเอกสารจำนวน ${document.getElementById('claim-count').value} เคลม\n\n`;
             document.querySelectorAll('.claim-item').forEach((item, i) => {
@@ -529,92 +493,20 @@
                 emailText += `${i + 1}. เลขเรื่อง ${claimNumber} คดีศาล${item.querySelector('.claim-court').value} เลขคดี ${item.querySelector('.claim-case-number').value}\n`;
                 emailText += `คดีระหว่าง ${companyName} โจทก์ กับ ${item.querySelector('.claim-defendant').value} จำเลย\n`;
                 emailText += `คดีนัดไกล่เกลี่ย/ให้การ/สืบพยาน ในวันที่ ${formatDate(item.querySelector('.claim-date').value, item.querySelector('.claim-time').value)}\n`;
-                item.querySelectorAll('.detail-input').forEach(detailInput => {
-                    if (detailInput.value.trim() !== '') { emailText += ` - ${detailInput.value.trim()}\n`; }
-                });
+                item.querySelectorAll('.detail-input').forEach(detailInput => { if (detailInput.value.trim() !== '') { emailText += ` - ${detailInput.value.trim()}\n`; }});
                 emailText += "\n";
             });
             emailText += `จึงเรียนมาเพื่อทราบและโปรดดำเนินการ \n\n\n ขอแสดงความนับถือ\n   เอกราช ทิพย์แมม`;
             document.getElementById('email-text').textContent = emailText;
             document.getElementById('email-result').classList.remove('hidden');
         });
-        document.getElementById('copy-email').addEventListener('click', function() {
-            navigator.clipboard.writeText(document.getElementById('email-text').textContent).then(() => customAlert("คัดลอกอีเมลเรียบร้อยแล้ว"));
+        document.getElementById('copy-email').addEventListener('click', function() { navigator.clipboard.writeText(document.getElementById('email-text').textContent).then(() => customAlert("คัดลอกอีเมลเรียบร้อยแล้ว")); });
+
+        // Initialize first page view and forms
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('deka-search');
+            updateClaimForms();
         });
-
-        // --- TASK LOG PAGE ---
-        document.getElementById('task-case-number-prefix').addEventListener('change', function() {
-            document.getElementById('task-case-number-other').classList.toggle('hidden', this.value !== 'other');
-        });
-
-        document.getElementById('task-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = e.target;
-            const saveBtn = document.getElementById('save-task-btn');
-            const btnText = document.getElementById('save-task-btn-text');
-            const spinner = document.getElementById('save-task-spinner');
-            
-            // ✅ 3. ADDED: Basic validation
-            if (form.elements['caseRef'].value.trim() === '') {
-                customAlert('กรุณากรอก "เลขเรื่อง" ก่อนบันทึก');
-                form.elements['caseRef'].focus();
-                return;
-            }
-
-            // Show loading state
-            saveBtn.disabled = true;
-            btnText.classList.add('hidden');
-            spinner.classList.remove('hidden');
-
-            let caseNumber;
-            const prefix = document.getElementById('task-case-number-prefix').value;
-            if (prefix === 'other') {
-                caseNumber = document.getElementById('task-case-number-other').value;
-            } else {
-                caseNumber = prefix + document.getElementById('task-case-number-value').value;
-            }
-            
-            // Use FormData to easily collect all form data
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            data.caseNumber = caseNumber; // Overwrite with combined case number
-
-            // --- GOOGLE SHEETS INTEGRATION ---
-            // ✅ 1. UPDATED: URL from your screenshot
-            const scriptURL = 'https://script.google.com/macros/s/AKfycby-or8FF0jNAaq3WA0VCWLPR1oJ1LAhYmYsSAdi8Qm-wxl_HbwrQyZY9ODNOtZM6sbg/exec';
-
-            fetch(scriptURL, { 
-                method: 'POST', 
-                // ✅ 2. REMOVED: 'mode: no-cors' to allow proper response handling
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json()) // Expect a JSON response from the script
-            .then(res => {
-                if (res.result === "success") {
-                    customAlert('บันทึกข้อมูลสำเร็จ!');
-                    form.reset(); // Clear the form
-                    // ✅ 4. ADDED: Ensure the 'other' field is hidden after reset
-                    document.getElementById('task-case-number-other').classList.add('hidden');
-                } else {
-                    // Handle errors reported by the script
-                    throw new Error(res.error || 'Unknown error from script');
-                }
-            })
-            .catch(error => {
-                console.error('Error!', error.message);
-                customAlert('เกิดข้อผิดพลาดในการบันทึก: ' + error.message);
-            })
-            .finally(() => {
-                // Reset button state
-                saveBtn.disabled = false;
-                btnText.classList.remove('hidden');
-                spinner.classList.add('hidden');
-            });
-        });
-
     </script>
 </body>
 </html>
