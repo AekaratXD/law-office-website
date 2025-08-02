@@ -68,6 +68,7 @@
             </div>
             <nav class="flex flex-wrap justify-center">
                 <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('deka-search')">ค้นหาคำพิพากษา</a>
+                <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('deka-ai')">ค้นหาฎีกา (AI)</a>
                 <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('fee-calculator')">คำนวณทุนทรัพย์</a>
                 <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('interest')">คำนวณดอกเบี้ย</a>
                 <a href="#" class="nav-link mx-3 my-1 text-white hover:text-gray-300" onclick="showPage('age')">คำนวณอายุ</a>
@@ -87,6 +88,16 @@
                     กำลังแสดงผลจาก <a href="https://deka.supremecourt.or.th/" target="_blank" class="text-blue-600 hover:underline">deka.supremecourt.or.th</a>
                  </p>
                  <iframe src="https://deka.supremecourt.or.th/" style="width: 100%; height: 80vh; border: 1px solid #ccc; border-radius: 0.5rem;"></iframe>
+            </div>
+        </div>
+
+        <div id="deka-ai-page" class="page hidden">
+            <div class="law-paper p-6 md:p-8 rounded-lg max-w-7xl mx-auto relative overflow-hidden">
+                 <h2 class="text-2xl font-bold mb-6 text-center law-gold">ค้นหาคำพิพากษาฎีกาด้วย AI</h2>
+                 <p class="text-center text-gray-500 mb-4">
+                    แสดงผลจาก <a href="https://deka-ai.app/lawllm" target="_blank" class="text-blue-600 hover:underline">deka-ai.app/lawllm</a>
+                 </p>
+                 <iframe src="https://deka-ai.app/lawllm" style="width: 100%; height: 80vh; border: 1px solid #ccc; border-radius: 0.5rem;"></iframe>
             </div>
         </div>
 
@@ -339,10 +350,12 @@
             // Minor case rule
             if (claimValue <= 300000) {
                 explanation = "คดีมโนสาเร่ (ทุนทรัพย์ไม่เกิน 300,000 บาท)";
-                if (fee > 1000) {
+                if (fee < 200) { // minimum fee for filed case
+                   // no change needed here based on prompt, but in reality, there's a min. Let's stick to user logic.
+                } else if (fee > 1000) {
                     fee = 1000;
-                    explanation += " ค่าธรรมเนียมสูงสุดไม่เกิน 1,000 บาท";
                 }
+                 explanation += " ค่าธรรมเนียมสูงสุดไม่เกิน 1,000 บาท";
             }
 
             document.getElementById('result-claim-value').textContent = claimValue.toLocaleString('th-TH');
@@ -380,8 +393,8 @@
             const startDate = new Date(startDateStr);
             const endDate = new Date(endDateStr);
             if (endDate < startDate) { customAlert("วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น"); return; }
-            const diffTime = endDate - startDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            const diffTime = endDate.getTime() - startDate.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Inclusive of end date
             const interest = (principal * interestRate / 100 / 365) * diffDays;
             const total = principal + interest;
             const formatDate = (date) => date.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -399,7 +412,7 @@
         document.getElementById('copy-interest').addEventListener('click', function() {
             const resultElements = document.querySelectorAll('#interest-result p');
             let resultText = 'ผลการคำนวณดอกเบี้ย\n---\n';
-            resultElements.forEach(element => { resultText += element.textContent + '\n'; });
+            resultElements.forEach(element => { resultText += element.textContent.replace(/\s+/g, ' ').trim() + '\n'; });
             navigator.clipboard.writeText(resultText).then(() => customAlert("คัดลอกผลลัพธ์เรียบร้อยแล้ว"));
         });
 
@@ -431,7 +444,7 @@
         document.getElementById('copy-age').addEventListener('click', function() {
             const resultElements = document.querySelectorAll('#age-result p');
             let resultText = 'ผลการคำนวณอายุ\n---\n';
-            resultElements.forEach(element => { resultText += element.textContent + '\n'; });
+            resultElements.forEach(element => { resultText += element.textContent.replace(/\s+/g, ' ').trim() + '\n'; });
             navigator.clipboard.writeText(resultText).then(() => customAlert("คัดลอกผลลัพธ์เรียบร้อยแล้ว"));
         });
 
@@ -454,8 +467,8 @@
         function addDetailItem(detailsContainer) {
             const detailCount = detailsContainer.querySelectorAll('.detail-item').length + 1;
             const detailItem = document.createElement('div');
-            detailItem.className = 'detail-item';
-            detailItem.innerHTML = `<input type="text" class="detail-input px-3 py-2 border rounded w-full" placeholder="รายละเอียดที่ ${detailCount}"><button type="button" class="remove-detail-btn bg-red-100 text-red-700 p-2 rounded hover:bg-red-200"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>`;
+            detailItem.className = 'detail-item flex items-center space-x-2';
+            detailItem.innerHTML = `<input type="text" class="detail-input px-3 py-2 border rounded w-full" placeholder="รายละเอียดที่ ${detailCount}"><button type="button" class="remove-detail-btn bg-red-100 text-red-700 p-2 rounded hover:bg-red-200 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>`;
             detailItem.querySelector('.remove-detail-btn').addEventListener('click', function() {
                 detailItem.remove();
                 detailsContainer.querySelectorAll('.detail-item').forEach((item, index) => { item.querySelector('.detail-input').placeholder = `รายละเอียดที่ ${index + 1}`; });
